@@ -7,7 +7,7 @@ class MongoFunction {
     Db db = await Db.create("mongodb://mongoadmin:passwd@140.115.26.115:27017/testdb?authSource=admin");
     await db.open();
     inspect(db);
-    var collection = await db.collection(collName);
+    var collection = db.collection(collName);
     return collection;
   }
 

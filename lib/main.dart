@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'sign_in_up.dart';
+import 'view_homework.dart';
+import 'competition.dart';
 import 'mongodb.dart';
 import 'create_content.dart';
 
@@ -10,7 +14,6 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,6 +22,9 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (context) => const MyHomePage(),
         '/create_content': (context) => const CreatePage(),
+        '/sign_in_up': (context) => const SignInUp(),
+        '/view_homework': (context) => const ViewHomework(),
+        '/competition': (context) => const Competition(),
       },
       theme: ThemeData(
         useMaterial3: true,
@@ -80,8 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text("Title: ${snapshot.data[index]["title"]}", style: Theme.of(context).primaryTextTheme.bodyLarge),
-                  trailing: Text("Content: ${snapshot.data[index]["content"]}", style: Theme.of(context).primaryTextTheme.bodyMedium),
+                  title: Text("${index+1}. Title: ${snapshot.data[index]["title"]}", style: Theme.of(context).primaryTextTheme.bodyLarge),
+                  subtitle: Text("  Content: ${snapshot.data[index]["content"]}", style: Theme.of(context).primaryTextTheme.bodyMedium),
                 );
               }
             );
@@ -97,10 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        drawer: HomePageDrawer(),
+        drawer: const HomePageDrawer(),
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text('Flutter Demo Home Page', style: Theme.of(context).primaryTextTheme.titleLarge, ),
+          title: Text('Home Page', style: Theme.of(context).primaryTextTheme.titleLarge, ),
         ),
         body: Center(
           child: Column(
@@ -127,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: Theme.of(context).elevatedButtonTheme.style,
                   child: const Text('Create'),
                   onPressed: () =>
-                    Navigator.popAndPushNamed(context, "/create_content"),
+                    Navigator.pushNamed(context, "/create_content"),
                 )
               )
             ],
@@ -144,31 +150,48 @@ class HomePageDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-      children: <Widget>[
-        DrawerHeader(
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.inversePrimary,
+        children: <Widget>[
+          DrawerHeader(
+            padding: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
+            child: Text(
+              'Menu',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).primaryTextTheme.displayLarge,
+            ),
           ),
-          child: Text(
-            'Menu',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).primaryTextTheme.displayLarge,
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: Text('Home', style: Theme.of(context).primaryTextTheme.bodyLarge,),
+            onTap: () {
+              Navigator.pushNamed(context, '/');
+            },
           ),
-        ),
-        ListTile(
-          title: Text('Home'),
-          onTap: () {
-            Navigator.popAndPushNamed(context, '/');
-          },
-        ),
-        ListTile(
-          title: Text('Create Content'),
-          onTap: () {
-            Navigator.popAndPushNamed(context, '/create_content');
-          },
-        ),
-      ],
-    ),);
+          ListTile(
+            leading: const Icon(Icons.create),
+            title: Text('Create Content', style: Theme.of(context).primaryTextTheme.bodyLarge,),
+            onTap: () {
+              Navigator.pushNamed(context, '/create_content');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: Text('Sign In & Sign Up', style: Theme.of(context).primaryTextTheme.bodyLarge,),
+            onTap: () {
+              Navigator.pushNamed(context, '/sign_in_up');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.directions_run),
+            title: Text('Competition', style: Theme.of(context).primaryTextTheme.bodyLarge,),
+            onTap: () {
+              Navigator.pushNamed(context, '/competition');
+            },
+          ),
+        ],
+      )
+    );
   }
 }
