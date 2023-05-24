@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ziyou_math_app_flutter/mongodb.dart';
 import 'package:ziyou_math_app_flutter/ziyou_api.dart';
 
@@ -20,6 +21,13 @@ class _CreatePage extends State<CreatePage> {
   int _numberOfQuestion = 0;
   int _numberOfDifficulty = 2;
 
+  @override
+  void initState() {
+    super.initState();
+    _numberOfQuestion = 0;
+    _numberOfDifficulty = 2;
+  }
+
   Future<void> _btnSave(String title, String content, BuildContext context) async{
     var dataMap = <String, dynamic>{
       'title':title,
@@ -28,8 +36,7 @@ class _CreatePage extends State<CreatePage> {
     MongoFunction.addData([dataMap]);
     print("ziyou");
     ZiYouAPI().getProblem();
-    Navigator.pushNamed(context, "/");
-
+    context.go("/");
   }
 
   Widget buildNumberOfQuestions(BuildContext context) {
@@ -59,7 +66,9 @@ class _CreatePage extends State<CreatePage> {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
+            if (_numberOfQuestion <= 14) {
               setState(() {_numberOfQuestion++;});
+            }
           }
         ),
         const SizedBox(width: 10),
@@ -67,71 +76,87 @@ class _CreatePage extends State<CreatePage> {
     );
   }
 
-  // Widget buildDifficulty(BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: <Widget>[
-  //       RadioListTile(
-  //         value: 1,
-  //         selected: true,
-  //         groupValue: _numberOfDifficulty,
-  //         controlAffinity: ListTileControlAffinity.leading,
-  //         activeColor: Theme.of(context).colorScheme.inversePrimary,
-  //         title: Text(
-  //           "簡單",
-  //           style: Theme.of(context).primaryTextTheme.bodyMedium,
-  //         ),
-  //         onChanged: (value) {
-  //           setState(() {_numberOfDifficulty = value!;});
-  //         }
-  //       ),
-  //       RadioListTile(
-  //           value: 2,
-  //           selected: true,
-  //           groupValue: _numberOfDifficulty,
-  //           controlAffinity: ListTileControlAffinity.leading,
-  //           activeColor: Theme.of(context).colorScheme.inversePrimary,
-  //           title: Text(
-  //             "中等",
-  //             style: Theme.of(context).primaryTextTheme.bodyMedium,
-  //           ),
-  //           onChanged: (value) {
-  //             setState(() {_numberOfDifficulty = value!;});
-  //           }
-  //       ),
-  //       RadioListTile(
-  //           value: 3,
-  //           selected: true,
-  //           groupValue: _numberOfDifficulty,
-  //           controlAffinity: ListTileControlAffinity.leading,
-  //           activeColor: Theme.of(context).colorScheme.inversePrimary,
-  //           title: Text(
-  //             "困難",
-  //             style: Theme.of(context).primaryTextTheme.bodyMedium,
-  //           ),
-  //           onChanged: (value) {
-  //             setState(() {_numberOfDifficulty = value!;});
-  //           }
-  //       )
-  //     ],
-  //   );
-  // }
-  //
-  // Widget buildBtnLastProblem(BuildContext context) {
-  //   return IconButton(onPressed: onPressed, icon: icon);
-  // }
-  //
-  // Widget buildBtnNextProblem(BuildContext context) {
-  //   return IconButton(
-  //     icon: const Icon(Icons.chevron_right_rounded),
-  //     onPressed: (){});
-  // }
-  //
-  // Widget buildImgProblem(BuildContext context) {
-  //   return Center(
-  //
-  //   );
-  // }
+  Widget buildDifficulty(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Flexible(
+          child: RadioListTile(
+            value: 1,
+            selected: true,
+            groupValue: _numberOfDifficulty,
+            controlAffinity: ListTileControlAffinity.leading,
+            activeColor: Colors.deepPurple,
+            title: Text(
+              "簡單",
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
+            ),
+            onChanged: (value) {
+              setState(() {_numberOfDifficulty = value!;});
+            }
+          )
+        ),
+        Flexible(
+          child: RadioListTile(
+            value: 2,
+            selected: true,
+            groupValue: _numberOfDifficulty,
+            controlAffinity: ListTileControlAffinity.leading,
+            activeColor: Colors.deepPurple,
+            title: Text(
+              "中等",
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
+            ),
+            onChanged: (value) {
+              setState(() {_numberOfDifficulty = value!;});
+            }
+          )
+        ),
+        Flexible(
+          child: RadioListTile(
+            value: 3,
+            selected: true,
+            groupValue: _numberOfDifficulty,
+            controlAffinity: ListTileControlAffinity.leading,
+            activeColor: Colors.deepPurple,
+            title: Text(
+              "困難",
+              style: Theme.of(context).primaryTextTheme.bodyMedium,
+            ),
+            onChanged: (value) {
+              setState(() {_numberOfDifficulty = value!;});
+            }
+          )
+        ),
+      ],
+    );
+  }
+
+  Widget buildBtnLastProblem(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.chevron_left_rounded),
+      onPressed: () {}
+    );
+  }
+
+  Widget buildBtnNextProblem(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.chevron_right_rounded),
+      onPressed: (){});
+  }
+
+  Widget buildImgProblem(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Flexible(
+          child: Image.asset("images/problems/pp1110110011.png"),
+        ),
+        Flexible(
+          child: Image.asset("images/problems/pp1110110011.png"),
+        )
+      ]
+    );
+  }
 
   // Image.network(
   // 'https://api.emath.math.ncu.edu.tw/problem/9ab8a119b144f0040bfc0490a5b7c30e')
@@ -152,8 +177,13 @@ class _CreatePage extends State<CreatePage> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 child: Row(
                   children: <Widget>[
+                    const SizedBox(width: 20,),
                     // todo:難易度->RadioListTile
-                    // buildDifficulty(context),
+                    // Wrap(
+                    //   alignment: WrapAlignment.center,
+                    //   children: [buildDifficulty(context)],
+                    // ),
+                    Expanded(child: buildDifficulty(context)),
                     const SizedBox(width: 20,),
                     // todo: 題數 => finish
                     buildNumberOfQuestions(context),
@@ -165,11 +195,11 @@ class _CreatePage extends State<CreatePage> {
                 child: Row(
                   children: <Widget>[
                     // todo: 前一題-> button
-                    // buildBtnLastProblem(context),
+                    buildBtnLastProblem(context),
                     // todo: 題目圖片
-                    // buildImgProlem(context),
+                    buildImgProblem(context),
                     // todo: 後一題-> button
-                    // buildBtnNextProblem(context),
+                    buildBtnNextProblem(context),
                   ],
                 ),
               ),
