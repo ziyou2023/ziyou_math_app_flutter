@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
                 padding: const EdgeInsets.fromLTRB(3, 3, 3, 3),
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                    future: Future.delayed(const Duration(seconds: 1), () => MongoFunction.getData({})),
+                    future: Future.delayed(const Duration(seconds: 1), () => MongoFunction.searchData('')),
                     builder: (BuildContext context, AsyncSnapshot snapshot)
                     => showDataListViewBuilder(context, snapshot)
                 ),

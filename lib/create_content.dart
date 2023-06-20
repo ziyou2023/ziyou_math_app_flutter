@@ -20,12 +20,15 @@ class _CreatePage extends State<CreatePage> {
 
   int _numberOfQuestion = 0;
   int _numberOfDifficulty = 2;
+  int currentIndex = 0;
+  String _problemIndex = "pp11101";
 
   @override
   void initState() {
     super.initState();
     _numberOfQuestion = 0;
     _numberOfDifficulty = 2;
+    currentIndex = 0;
   }
 
   Future<void> _btnSave(String title, String content, BuildContext context) async{
@@ -33,7 +36,7 @@ class _CreatePage extends State<CreatePage> {
       'title':title,
       'content':content
     };
-    MongoFunction.addData([dataMap]);
+    MongoFunction.insertData(dataMap);
     print("ziyou");
     ZiYouAPI().getProblem();
     context.go("/");
@@ -41,35 +44,45 @@ class _CreatePage extends State<CreatePage> {
 
   Widget buildNumberOfQuestions(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const SizedBox(width: 10),
-        Text(
-          "題數",
-          style: Theme.of(context).primaryTextTheme.bodyMedium,
+        Flexible(
+          fit: FlexFit.loose,
+          child: Text(
+            "題數",
+            style: Theme.of(context).primaryTextTheme.bodyMedium,
+          ),
         ),
         const SizedBox(width: 10),
-        IconButton(
-          icon: const Icon(Icons.remove),
-          onPressed: () {
-            if (_numberOfQuestion != 0) {
-              setState(() {_numberOfQuestion--;});
-            }
-          }
+        Flexible(
+          fit: FlexFit.loose,
+          child: IconButton(
+              icon: const Icon(Icons.remove),
+              onPressed: () {
+                if (_numberOfQuestion != 0) {
+                  setState(() {_numberOfQuestion--;});
+                }
+              }
+          ),
         ),
         const SizedBox(width: 10),
-        Text(
-          "$_numberOfQuestion",
-          style: Theme.of(context).primaryTextTheme.bodyMedium,
+        Flexible(
+          child: Text(
+            "$_numberOfQuestion",
+            style: Theme.of(context).primaryTextTheme.bodyMedium,
+          ),
         ),
         const SizedBox(width: 10),
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            if (_numberOfQuestion <= 14) {
-              setState(() {_numberOfQuestion++;});
-            }
-          }
+        Flexible(
+          child: IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                if (_numberOfQuestion <= 14) {
+                  setState(() {_numberOfQuestion++;});
+                }
+              }
+          ),
         ),
         const SizedBox(width: 10),
       ],
@@ -78,7 +91,7 @@ class _CreatePage extends State<CreatePage> {
 
   Widget buildDifficulty(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Flexible(
           child: RadioListTile(
@@ -132,35 +145,40 @@ class _CreatePage extends State<CreatePage> {
     );
   }
 
-  Widget buildBtnLastProblem(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.chevron_left_rounded),
-      onPressed: () {}
+  Widget buildBtnPreviousProblem(BuildContext context, int currentIndex) {
+    return Flexible(
+      fit: FlexFit.loose,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_left),
+        onPressed: () {
+          // currentIndex = (currentIndex - 1);
+        }
+      ),
     );
   }
 
-  Widget buildBtnNextProblem(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.chevron_right_rounded),
-      onPressed: (){});
-  }
-
-  Widget buildImgProblem(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Flexible(
-          child: Image.asset("images/problems/pp1110110011.png"),
-        ),
-        Flexible(
-          child: Image.asset("images/problems/pp1110110011.png"),
-        )
-      ]
+  Widget buildBtnNextProblem(BuildContext context, int currentIndex) {
+    return Flexible(
+      fit: FlexFit.loose,
+      child: IconButton(
+        icon: const Icon(Icons.arrow_right),
+        onPressed: () {
+          // currentIndex = (currentIndex + 1);
+        }
+      ),
     );
   }
 
-  // Image.network(
-  // 'https://api.emath.math.ncu.edu.tw/problem/9ab8a119b144f0040bfc0490a5b7c30e')
-  //
+  Widget buildImgProblem(BuildContext context, int currentIndex) {
+    return Flexible(
+      child: Container(
+        width: 700,
+        height: 450,
+        child: Image.asset("images/problems/pp1110110011.png", fit: BoxFit.cover),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,77 +187,42 @@ class _CreatePage extends State<CreatePage> {
         title: Text('Create Page', style: Theme.of(context).primaryTextTheme.titleLarge, ),
       ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                child: Row(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    const SizedBox(width: 20,),
-                    // todo:難易度->RadioListTile
-                    // Wrap(
-                    //   alignment: WrapAlignment.center,
-                    //   children: [buildDifficulty(context)],
-                    // ),
-                    Expanded(child: buildDifficulty(context)),
-                    const SizedBox(width: 20,),
-                    // todo: 題數 => finish
                     buildNumberOfQuestions(context),
+                    // buildDifficulty(context),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                child: Row(
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // todo: 前一題-> button
-                    buildBtnLastProblem(context),
-                    // todo: 題目圖片
-                    buildImgProblem(context),
-                    // todo: 後一題-> button
-                    buildBtnNextProblem(context),
+                    buildBtnPreviousProblem(context, currentIndex),
+                    const SizedBox(width: 20.0),
+                    buildImgProblem(context, currentIndex),
+                    const SizedBox(width: 20.0),
+                    buildBtnNextProblem(context, currentIndex),
                   ],
                 ),
-              ),
-
-              ElevatedButton(
-                style: Theme.of(context).elevatedButtonTheme.style,
-                child: const Text('Save'),
-                onPressed: () => {
-                  _btnSave(titleController.text, contentController.text, context),
-                  titleController.clear(),
-                  contentController.clear(),
-                }
-              ),
-            ],
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
+                    child: const Text('Save'),
+                    onPressed: () => {
+                      _btnSave(titleController.text, contentController.text, context),
+                      titleController.clear(),
+                      contentController.clear(),
+                    }
+                ),
+              ],
+            ),
           ),
-        )
       )
     );
   }
 }
-
-// Padding(
-// padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-// child: TextField(
-// controller: titleController,
-// autofocus: true,
-// decoration: const InputDecoration(
-// labelText: "Title",
-// hintText: "The title is...",
-// ),
-// ),
-// ),
-// Padding(
-// padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-// child: TextField(
-// controller: contentController,
-// maxLines: 5,
-// decoration: const InputDecoration(
-// labelText: "Content",
-// hintText: "Write something...",
-// ),
-// ),
-// ),
