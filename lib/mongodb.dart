@@ -1,31 +1,40 @@
-import 'dart:developer';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class MongoFunction {
+  static Db? _db;
+  static const String _collectionName = 'testprofile';
 
-  static Future<dynamic> connectDataBase(String collName) async{
-    Db db = await Db.create("mongodb://mongoadmin:passwd@140.115.26.115:27017/testdb?authSource=admin");
+  static Future<void> connectToDatabase() async {
+    final Db db = await Db.create('mongodb://admin:password@140.115.26.115:27017/testdb?authSource=admin');
     await db.open();
-    inspect(db);
-    var collection = db.collection(collName);
-    return collection;
+    _db = db;
   }
 
-  static void addData(List<Map<String, dynamic>> data) async{
-    var profile = await connectDataBase("testprofile");
-    for(int i = 0; i < data.length; i++){
-      data[i]['_id'] = ObjectId();
+  static Future<void> insertData(Map<String, dynamic> data) async {
+
+    if (_db == null) {
+      throw Exception('Database connection not established.');
     }
-    profile.insertMany(data);
+
+    final collection = _db!.collection(_collectionName);
+    await collection.insert(data);
   }
 
-  static Future<List<Map<String, dynamic>>> getData(Map<String, String> target) async{
-    var profile = await connectDataBase("testprofile");
-    if (target.isEmpty){
-      return await profile.find().toList();
+  static Future<List<Map<String, dynamic>>> searchData(String keyword) async {
+    if (_db == null) {
+      throw Exception('Database connection not established.');
     }
-    else {
-      return await profile.find(target).toList();
-    }
+
+    final collection = _db!.collection(_collectionName);
+    // final query = where
+    //   .or([
+    //   {'field1': RegExp(keyword, caseSensitive: false)},
+    // //   // where.match('field1', RegExp(keyword, caseSensitive: false) as String),
+    // //   // Add more fields as necessary
+    //   ] as SelectorBuilder).sortBy('field_to_sort_by');
+
+    final result = await collection.find().toList();
+    // if (result.isEmpty)
+    return result.map((document) => document).toList();
   }
 }
