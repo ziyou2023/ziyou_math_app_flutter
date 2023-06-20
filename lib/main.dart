@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ziyou_math_app_flutter/HomePage.dart';
+import 'package:ziyou_math_app_flutter/mongodb.dart';
 
 import 'sign_in_up.dart';
 import 'view_homework.dart';
@@ -9,6 +10,7 @@ import 'create_content.dart';
 
 void main() async{
   runApp(const MyApp());
+  await MongoFunction.connectToDatabase();
 }
 
 class MyApp extends StatelessWidget {
